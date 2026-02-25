@@ -296,9 +296,400 @@
     .glass-panel { padding:30px 24px; }
     .stat-grid { grid-template-columns:repeat(3,1fr); }
   }
+
+  /* ═══════════════════════════════════════════════════
+     EXPLORE BUTTONS
+  ═══════════════════════════════════════════════════ */
+  .explore-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 32px;
+    padding: 14px 36px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--blue);
+    border: 1px solid var(--blue);
+    background: transparent;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+    transition: color 0.3s, box-shadow 0.3s;
+    z-index: 1;
+  }
+  .explore-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--blue);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    z-index: -1;
+  }
+  .explore-btn:hover::before { transform: scaleX(1); }
+  .explore-btn:hover { color: #000; box-shadow: 0 0 30px rgba(0,180,255,0.5); }
+  .explore-btn .btn-arrow {
+    transition: transform 0.3s;
+  }
+  .explore-btn:hover .btn-arrow { transform: translateX(5px); }
+
+  .explore-btn.warm { color: #ff8800; border-color: #ff8800; }
+  .explore-btn.warm::before { background: #ff8800; }
+  .explore-btn.warm:hover { box-shadow: 0 0 30px rgba(255,136,0,0.5); }
+
+  .explore-btn.green { color: var(--green); border-color: var(--green); }
+  .explore-btn.green::before { background: var(--green); }
+  .explore-btn.green:hover { box-shadow: 0 0 30px rgba(0,255,136,0.5); }
+
+  .explore-btn.purple { color: #cc88ff; border-color: #cc88ff; }
+  .explore-btn.purple::before { background: #cc88ff; }
+  .explore-btn.purple:hover { box-shadow: 0 0 30px rgba(200,136,255,0.5); }
+
+  /* ═══════════════════════════════════════════════════
+     MODAL OVERLAY
+  ═══════════════════════════════════════════════════ */
+  #modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0);
+    backdrop-filter: blur(0px);
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    transition: background 0.5s ease, backdrop-filter 0.5s ease;
+  }
+  #modal-overlay.active {
+    background: rgba(0,0,6,0.88);
+    backdrop-filter: blur(12px);
+    pointer-events: all;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     MODAL BOX
+  ═══════════════════════════════════════════════════ */
+  .modal-box {
+    position: relative;
+    width: min(880px, 94vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: rgba(8,12,22,0.97);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,180,255,0.3) transparent;
+    opacity: 0;
+    transform: scale(0.8) translateY(40px);
+    transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .modal-box::-webkit-scrollbar { width: 4px; }
+  .modal-box::-webkit-scrollbar-track { background: transparent; }
+  .modal-box::-webkit-scrollbar-thumb { background: rgba(0,180,255,0.3); border-radius: 2px; }
+
+  #modal-overlay.active .modal-box {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  /* TOP ACCENT LINE */
+  .modal-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--modal-accent, linear-gradient(90deg, #00b4ff, #00ff88));
+    box-shadow: 0 0 20px rgba(0,180,255,0.6);
+    z-index: 2;
+  }
+
+  /* ── MODAL HEADER ── */
+  .modal-header {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    min-height: 220px;
+    display: flex; align-items: flex-end;
+  }
+  .modal-header-bg {
+    position: absolute; inset: 0;
+    z-index: 0;
+  }
+  .modal-header-canvas {
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .modal-header-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,12,22,1) 0%, transparent 60%);
+    z-index: 1;
+  }
+  .modal-header-content {
+    position: relative; z-index: 2;
+    padding: 28px 40px 32px;
+    width: 100%;
+  }
+  .modal-emoji-big {
+    font-size: 3rem; line-height: 1;
+    display: block; margin-bottom: 10px;
+    animation: emoji-float 3s ease-in-out infinite;
+  }
+  @keyframes emoji-float {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+  .modal-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--accent-col, var(--blue));
+    margin-bottom: 8px;
+    display: block;
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 0.95;
+    color: #fff;
+    letter-spacing: 0.04em;
+  }
+  .modal-title .accent { color: var(--accent-col, var(--blue)); }
+
+  /* ── CLOSE BUTTON ── */
+  .modal-close {
+    position: absolute; top: 20px; right: 20px; z-index: 10;
+    width: 40px; height: 40px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: #fff; font-size: 1.2rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border-radius: 50%;
+    transition: background 0.3s, transform 0.3s, border-color 0.3s;
+  }
+  .modal-close:hover {
+    background: rgba(255,50,50,0.2);
+    border-color: rgba(255,50,50,0.5);
+    transform: rotate(90deg) scale(1.1);
+  }
+
+  /* ── MODAL BODY ── */
+  .modal-body {
+    padding: 0 40px 40px;
+  }
+
+  /* ── INTRO TEXT ── */
+  .modal-intro {
+    font-family: 'Barlow', sans-serif; font-weight: 300;
+    font-size: clamp(0.95rem, 1.5vw, 1.05rem); line-height: 1.9;
+    color: rgba(232,237,245,0.8);
+    margin-bottom: 32px;
+    border-left: 2px solid var(--accent-col, var(--blue));
+    padding-left: 20px;
+  }
+
+  /* ── FACT CARDS GRID ── */
+  .modal-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px; margin-bottom: 32px;
+  }
+  .modal-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 2px;
+    padding: 20px 18px;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease, background 0.3s;
+  }
+  .modal-card:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: var(--accent-col, var(--blue));
+  }
+  .modal-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-col, var(--blue)), transparent);
+    opacity: 0.5;
+  }
+  .modal-card.visible { opacity: 1; transform: translateY(0); }
+  .modal-card-emoji { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+  .modal-card-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem; line-height: 1;
+    color: var(--accent-col, var(--blue));
+    text-shadow: 0 0 20px var(--accent-col, rgba(0,180,255,0.5));
+  }
+  .modal-card-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-dim); margin-top: 4px;
+  }
+  .modal-card-desc {
+    font-family: 'Barlow', sans-serif; font-weight: 300;
+    font-size: 0.8rem; line-height: 1.6;
+    color: rgba(232,237,245,0.6); margin-top: 8px;
+  }
+
+  /* ── TIMELINE ── */
+  .modal-timeline {
+    position: relative; margin-bottom: 32px; padding-left: 24px;
+  }
+  .modal-timeline::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+    background: linear-gradient(to bottom, var(--accent-col, var(--blue)), transparent);
+  }
+  .timeline-item {
+    position: relative; margin-bottom: 22px;
+    opacity: 0; transform: translateX(-15px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+  .timeline-item::before {
+    content: '';
+    position: absolute; left: -28px; top: 6px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent-col, var(--blue));
+    box-shadow: 0 0 10px var(--accent-col, rgba(0,180,255,0.8));
+  }
+  .timeline-year {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.2rem; color: var(--accent-col, var(--blue));
+    letter-spacing: 0.1em;
+  }
+  .timeline-text {
+    font-family: 'Barlow', sans-serif; font-weight: 300;
+    font-size: 0.85rem; line-height: 1.6;
+    color: rgba(232,237,245,0.75);
+  }
+
+  /* ── NEON TAGS ── */
+  .modal-tags {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px;
+  }
+  .modal-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid;
+    background: transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+  .modal-tag:hover { transform: scale(1.05); }
+
+  /* ── COLORFUL TEXT SECTION ── */
+  .modal-rainbow-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    letter-spacing: 0.05em;
+    background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #cc44ff);
+    background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow-shift 4s linear infinite;
+    margin-bottom: 14px;
+  }
+  @keyframes rainbow-shift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  /* ── QUOTE BLOCK ── */
+  .modal-quote {
+    margin: 24px 0;
+    padding: 20px 24px;
+    border-left: 3px solid var(--accent-col, var(--blue));
+    background: rgba(255,255,255,0.02);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-style: italic; line-height: 1.5;
+    color: rgba(232,237,245,0.9);
+    letter-spacing: 0.02em;
+  }
+  .modal-quote-author {
+    margin-top: 10px;
+    font-size: 0.75rem; letter-spacing: 0.2em;
+    color: var(--accent-col, var(--blue)); text-transform: uppercase;
+    font-style: normal;
+  }
+
+  /* ── FLOATING EMOJI BURST ── */
+  .emoji-burst {
+    position: fixed; pointer-events: none; z-index: 2000;
+    font-size: 1.8rem;
+    animation: burst-out 1.2s ease forwards;
+  }
+  @keyframes burst-out {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx,0),var(--dy,-60px)) scale(0.5); }
+  }
+
+  /* ── MODAL MINI 3D CANVAS ── */
+  .modal-3d-container {
+    width: 100%; height: 200px;
+    position: relative; border-radius: 2px; overflow: hidden;
+    margin-bottom: 28px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .modal-3d-container canvas {
+    width: 100%; height: 100%; display: block;
+  }
+  .modal-3d-label {
+    position: absolute; bottom: 10px; right: 14px; z-index: 2;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── PROGRESS BARS ── */
+  .modal-progress-list { margin-bottom: 28px; }
+  .progress-item { margin-bottom: 16px; }
+  .progress-label-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+  .progress-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(232,237,245,0.8);
+  }
+  .progress-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.9rem; color: var(--accent-col, var(--blue));
+  }
+  .progress-track {
+    height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent-col, var(--blue)), var(--accent-col2, var(--green)));
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--accent-col, rgba(0,180,255,0.5));
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── DIVIDER ── */
+  .modal-divider {
+    height: 1px; margin: 28px 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  }
+
+  /* ── SECTION COLOR THEMES ── */
+  [data-modal="industrial"] { --accent-col: #ff8800; --accent-col2: #ffb347; }
+  [data-modal="economy"] { --accent-col: #00b4ff; --accent-col2: #00ff88; }
+  [data-modal="education"] { --accent-col: #00ff88; --accent-col2: #00b4ff; }
+  [data-modal="football"] { --accent-col: #ffffff; --accent-col2: #00ff88; }
+  [data-modal="culture"] { --accent-col: #cc88ff; --accent-col2: #ff66cc; }
+  [data-modal="hero"] { --accent-col: #00b4ff; --accent-col2: #cc88ff; }
+
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL OVERLAY SYSTEM
+════════════════════════════════════════════════════════════ -->
+<div id="modal-overlay">
+  <div class="modal-box" id="modal-box">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <!-- Dynamic content injected by JS -->
+    <div id="modal-inner"></div>
+  </div>
+</div>
+
+
 
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
@@ -328,6 +719,9 @@
       Industrial Legacy.<br>Modern Power.
     </div>
     <div class="hero-sub" id="hero-sub">53.4808° N, 2.2426° W — England</div>
+    <button class="explore-btn" onclick="openModal('hero', this)" style="margin-top:28px;">
+      Discover MCR <span class="btn-arrow">→</span>
+    </button>
   </div>
   <div class="scroll-hint">
     <div class="scroll-line"></div>
@@ -361,6 +755,11 @@
           <div class="stat-num" style="color:#ff8800;">1st</div>
           <div class="stat-lbl">Industrial City</div>
         </div>
+      
+      <div style="text-align:center;margin-top:8px;">
+        <button class="explore-btn warm" onclick="openModal('industrial', this)">
+          The Full Story <span class="btn-arrow">→</span>
+        </button>
       </div>
     </div>
   </div>
@@ -399,6 +798,11 @@
           <div class="stat-num">7%</div>
           <div class="stat-lbl">Annual Growth</div>
         </div>
+      
+      <div style="text-align:center;margin-top:8px;">
+        <button class="explore-btn" onclick="openModal('economy', this)">
+          Explore Economy <span class="btn-arrow">→</span>
+        </button>
       </div>
     </div>
   </div>
@@ -429,6 +833,11 @@
           <div class="stat-num" style="color:var(--green);">Top 5</div>
           <div class="stat-lbl">UK Research Output</div>
         </div>
+      
+      <div style="text-align:center;margin-top:8px;">
+        <button class="explore-btn green" onclick="openModal('education', this)">
+          Science & Discovery <span class="btn-arrow">→</span>
+        </button>
       </div>
     </div>
   </div>
@@ -459,6 +868,11 @@
           <div class="stat-num" style="color:#e8edf5;">1M+</div>
           <div class="stat-lbl">Global Supporters</div>
         </div>
+      
+      <div style="text-align:center;margin-top:8px;">
+        <button class="explore-btn" style="color:#fff;border-color:#fff;" onclick="openModal('football', this)">
+          The Beautiful Game <span class="btn-arrow">→</span>
+        </button>
       </div>
     </div>
   </div>
@@ -476,7 +890,12 @@
       <p class="section-body">
         A city of cultural influence and musical legacy. From the Hacienda to Oasis, from Factory Records to contemporary arts — Manchester writes its own cultural chapter with unapologetic authenticity.
       </p>
-      <div class="wave-bars" id="wave-bars"></div>
+      <div class="wave-bars" id="wave-bars">
+      <div style="text-align:center;margin-top:8px;">
+        <button class="explore-btn purple" onclick="openModal('culture', this)">
+          Culture & Sound <span class="btn-arrow">→</span>
+        </button>
+      </div>
     </div>
   </div>
 </section>
@@ -1258,6 +1677,656 @@ function handleAllResize(){
   });
 }
 window.addEventListener('resize',handleAllResize);
+
+
+
+// ═══════════════════════════════════════════════════════════════
+// MODAL DATA — rich content per section
+// ═══════════════════════════════════════════════════════════════
+const MODALS = {
+  hero: {
+    eyebrow: 'Manchester · England · 53.4808°N',
+    title: 'The City That <span class="accent">Built</span> the World',
+    emoji: '🏙️',
+    theme: 'hero',
+    accentColor: '#00b4ff',
+    accentColor2: '#cc88ff',
+    scene3d: 'city',
+    intro: `Manchester isn't just a city — it's a force of nature. From its founding as a Roman fort in 79 AD to becoming the engine of the Industrial Revolution, Manchester has perpetually reinvented itself, forging a spirit that resonates globally: relentless, authentic, pioneering.`,
+    rainbow: '✨ Manchester — Where History Lives',
+    quote: { text: `"What Manchester does today, the rest of the world does tomorrow."`, author: '— Benjamin Disraeli, 1867' },
+    cards: [
+      { emoji: '🏛️', value: '79 AD', label: 'Founded by Romans', desc: 'Originally a Roman fortification called Mamucium on the River Medlock' },
+      { emoji: '🌍', value: '553K', label: 'City Population', desc: 'Greater Manchester home to 2.9 million — fastest-growing UK metro' },
+      { emoji: '🚂', value: '1830', label: 'First Railway', desc: 'Manchester–Liverpool: the world\'s first intercity passenger railway' },
+      { emoji: '🌧️', value: '32"', label: 'Annual Rainfall', desc: 'Yes, it really does rain — but Mancunians wouldn\'t have it any other way' },
+      { emoji: '🎓', value: '100K+', label: 'Students', desc: 'One of Europe\'s largest student populations — 5 universities in the city' },
+      { emoji: '✈️', value: '3rd', label: 'UK Airport', desc: 'Manchester Airport connects to 200+ destinations worldwide' }
+    ],
+    timeline: [
+      { year: '79 AD', text: 'Romans build fort Mamucium — the seed of Manchester.' },
+      { year: '1301', text: 'Royal charter granted. Manchester becomes a market town.' },
+      { year: '1761', text: 'Bridgewater Canal opens — kickstarts the Industrial Revolution.' },
+      { year: '1830', text: 'World\'s first intercity railway links Manchester to Liverpool.' },
+      { year: '1962', text: 'The Haçienda opens. Manchester music becomes global culture.' },
+      { year: '2004', text: 'Graphene isolated at University of Manchester. Nobel Prize follows.' }
+    ],
+    tags: [
+      { text: '🏴󠁧󠁢󠁥󠁮󠁧󠁿 Northern England', col: '#00b4ff' },
+      { text: '⚡ Northern Powerhouse', col: '#00ff88' },
+      { text: '🎵 Music Capital', col: '#cc88ff' },
+      { text: '⚽ Football City', col: '#ff8800' },
+      { text: '🔬 Science Hub', col: '#00b4ff' }
+    ],
+    progress: [
+      { name: 'Economic Growth Rate', pct: 88, val: '7% p.a.' },
+      { name: 'Global City Index', pct: 75, val: 'Alpha—' },
+      { name: 'Innovation Score', pct: 82, val: '82/100' },
+      { name: 'Cultural Influence', pct: 93, val: 'Top 10 UK' }
+    ]
+  },
+
+  industrial: {
+    eyebrow: '1760 — 1850 · The First Industrial City',
+    title: 'Cotton, <span class="accent">Steam</span> & Fire',
+    emoji: '🏭',
+    theme: 'industrial',
+    accentColor: '#ff8800',
+    accentColor2: '#ffb347',
+    scene3d: 'factory',
+    intro: `The world had never seen anything like it. In the span of a single lifetime, Manchester transformed from a market town into the thundering heart of global manufacturing — a city of cotton, coal and human ambition that forged the modern world and sparked revolutions from Paris to Philadelphia.`,
+    rainbow: '🔥 The Furnace of the Modern World',
+    quote: { text: `"Manchester is the chimney of the world. Rich rascals, poor rogues, drunken ragamuffins and prostitutes form the moral and physical appearance of the streets."`, author: '— Friedrich Engels, 1845' },
+    cards: [
+      { emoji: '🏭', value: '50+', label: 'Cotton Mills by 1800', desc: 'Manchester\'s mills processed cotton from across the British Empire' },
+      { emoji: '💧', value: '1761', label: 'Bridgewater Canal', desc: 'Halved coal prices overnight — the spark that lit the Industrial Revolution' },
+      { emoji: '🔧', value: '1784', label: 'Steam Power', desc: 'Watt\'s steam engine adopted in Manchester mills — productivity explodes' },
+      { emoji: '👥', value: '10x', label: 'Population 1771–1831', desc: 'From 25,000 to 250,000 in 60 years — the fastest urban growth in history' },
+      { emoji: '📜', value: '1819', label: 'Peterloo Massacre', desc: 'Workers demand reform — 18 killed, sparking the path to democracy' },
+      { emoji: '🧵', value: '80%', label: 'World Cotton Trade', desc: 'At its peak, Manchester controlled the majority of global cotton exchange' }
+    ],
+    timeline: [
+      { year: '1761', text: 'Bridgewater Canal opens — the world\'s first major industrial canal.' },
+      { year: '1781', text: 'First steam-powered cotton mills open in Manchester.' },
+      { year: '1794', text: 'Manchester Exchange established — global cotton trading begins.' },
+      { year: '1819', text: 'Peterloo Massacre — 80,000 march for political reform.' },
+      { year: '1830', text: 'Liverpool & Manchester Railway — world\'s first intercity rail.' },
+      { year: '1850', text: 'Manchester\'s population surpasses 300,000. Cottonopolis at peak.' }
+    ],
+    tags: [
+      { text: '🧵 Cottonopolis', col: '#ff8800' },
+      { text: '💨 Steam Power', col: '#ffb347' },
+      { text: '⛏️ Industrial Revolution', col: '#ff8800' },
+      { text: '🚢 Canal Network', col: '#ff6600' },
+      { text: '📰 Workers Rights', col: '#ffb347' }
+    ],
+    progress: [
+      { name: 'Global Cotton Market Share', pct: 80, val: '~80%' },
+      { name: 'UK Industrial Output', pct: 70, val: 'Top 3' },
+      { name: 'Canal Network (miles)', pct: 65, val: '165mi' },
+      { name: 'Mill Workers by 1850', pct: 90, val: '100K+' }
+    ]
+  },
+
+  economy: {
+    eyebrow: '21st Century · Northern Powerhouse',
+    title: 'The Digital <span class="accent">North</span>',
+    emoji: '💰',
+    theme: 'economy',
+    accentColor: '#00b4ff',
+    accentColor2: '#00ff88',
+    scene3d: 'network',
+    intro: `Manchester's economy has undergone a breathtaking reinvention. Once defined by cotton and coal, the city now powers the digital age — home to KPMG's largest UK office outside London, MediaCityUK, a booming fintech scene, and some of Britain's fastest-growing tech startups.`,
+    rainbow: '📈 £80 Billion Economy & Climbing',
+    quote: { text: `"Greater Manchester is the most dynamic and commercially active region outside of London."`, author: '— UK Government Northern Powerhouse Report, 2022' },
+    cards: [
+      { emoji: '💷', value: '£80B', label: 'Regional Economy', desc: 'Greater Manchester GVA — second only to London among UK metro areas' },
+      { emoji: '📺', value: '2011', label: 'MediaCityUK Opens', desc: 'BBC, ITV, dock10 studios — 250 media & tech firms call Salford home' },
+      { emoji: '🏦', value: '2nd', label: 'Financial Hub', desc: 'Manchester is the UK\'s second-largest centre for financial & professional services' },
+      { emoji: '🚀', value: '400+', label: 'Tech Startups', desc: 'Manchester Tech ecosystem growing at 20%+ per year — one of Europe\'s hottest' },
+      { emoji: '🌐', value: '250K+', label: 'Digital Jobs', desc: 'Greater Manchester employs more digital workers than any UK region outside London' },
+      { emoji: '📊', value: '7%', label: 'Annual Growth Rate', desc: 'Consistently outpacing national GDP growth for the past decade' }
+    ],
+    timeline: [
+      { year: '1996', text: 'IRA bomb blast — Manchester\'s controversial catalyst for city regeneration.' },
+      { year: '2002', text: 'Commonwealth Games. Manchester showcases itself to the world.' },
+      { year: '2011', text: 'MediaCityUK opens in Salford Quays — media capital of the North.' },
+      { year: '2015', text: 'Northern Powerhouse initiative announced. Devolution begins.' },
+      { year: '2018', text: 'HSBC, Amazon, Booking.com open major Manchester HQs.' },
+      { year: '2024', text: 'Manchester ranked top 5 global tech ecosystems to watch.' }
+    ],
+    tags: [
+      { text: '📡 Tech & Digital', col: '#00b4ff' },
+      { text: '🏦 Finance', col: '#00ff88' },
+      { text: '🎬 MediaCityUK', col: '#00b4ff' },
+      { text: '💊 Life Sciences', col: '#00ff88' },
+      { text: '🌐 Fintech', col: '#4d96ff' }
+    ],
+    progress: [
+      { name: 'GDP vs National Average', pct: 78, val: '+18%' },
+      { name: 'Tech Sector Growth', pct: 84, val: '+22%' },
+      { name: 'Foreign Investment (UK rank)', pct: 72, val: '2nd' },
+      { name: 'Employment Rate', pct: 74, val: '74.2%' }
+    ]
+  },
+
+  education: {
+    eyebrow: 'Research & Discovery · Nobel Laureates',
+    title: 'Where Atoms <span class="accent">Split</span>',
+    emoji: '⚛️',
+    theme: 'education',
+    accentColor: '#00ff88',
+    accentColor2: '#00b4ff',
+    scene3d: 'atoms',
+    intro: `The University of Manchester sits atop a legacy so extraordinary it defies belief — 25 Nobel Laureates, the discovery of graphene, the splitting of the atom, and Alan Turing's foundational work in computer science. Manchester doesn't just study the future. It creates it.`,
+    rainbow: '🔬 Science That Changed Everything',
+    quote: { text: `"The University of Manchester is where the modern world was invented."`, author: '— The Guardian, Science Special, 2021' },
+    cards: [
+      { emoji: '🏆', value: '25', label: 'Nobel Laureates', desc: 'More Nobel Prize winners than most nations — in Physics, Chemistry, Economics' },
+      { emoji: '⚛️', value: '1917', text: '1917', label: 'Atom Split Here', desc: 'Ernest Rutherford split the atom at Manchester — changing physics forever' },
+      { emoji: '💻', value: '1948', label: 'Baby Computer', desc: 'Manchester\'s Baby (SSEM) — the world\'s first stored-program computer runs here' },
+      { emoji: '🔷', value: '2004', label: 'Graphene', desc: 'Andre Geim & Kostya Novoselov discover graphene — Nobel Prize 2010' },
+      { emoji: '📐', value: '£1B', label: 'National Graphene Institute', desc: 'World\'s first graphene research institute, opened 2015 in Manchester' },
+      { emoji: '🤖', value: 'Alan', label: 'Turing Was Here', desc: 'Father of computer science worked at Manchester from 1948 until his death' }
+    ],
+    timeline: [
+      { year: '1824', text: 'University of Manchester founded — ranked globally top 30.' },
+      { year: '1903', text: 'Ernest Rutherford moves to Manchester. Nuclear physics is born.' },
+      { year: '1917', text: 'Rutherford splits the atom at the Victoria University of Manchester.' },
+      { year: '1948', text: 'The Manchester Baby — world\'s first electronic stored-program computer.' },
+      { year: '1952', text: 'Alan Turing publishes work on morphogenesis from Manchester.' },
+      { year: '2004', text: 'Graphene isolated. The 21st century\'s wonder material discovered here.' }
+    ],
+    tags: [
+      { text: '🔬 Graphene', col: '#00ff88' },
+      { text: '⚛️ Nuclear Physics', col: '#00b4ff' },
+      { text: '💻 Computing', col: '#00ff88' },
+      { text: '🧬 Life Sciences', col: '#4dff88' },
+      { text: '🧠 AI Research', col: '#00b4ff' }
+    ],
+    progress: [
+      { name: 'World University Ranking', pct: 85, val: 'Top 30' },
+      { name: 'Research Excellence', pct: 92, val: '92%' },
+      { name: 'Graduate Employment', pct: 88, val: '88%' },
+      { name: 'International Students', pct: 38, val: '38%' }
+    ]
+  },
+
+  football: {
+    eyebrow: 'The Beautiful Game · Global Capital',
+    title: 'Theatre of <span class="accent">Dreams</span>',
+    emoji: '⚽',
+    theme: 'football',
+    accentColor: '#e8edf5',
+    accentColor2: '#00ff88',
+    scene3d: 'stadium',
+    intro: `Two clubs. One city. Infinite passion. Manchester United and Manchester City are two of the most storied, most-watched, most valuable football clubs on planet Earth — and they share a postcode. The Manchester Derby is the most-watched club match in the world, broadcast to 650 million people.`,
+    rainbow: '🏆 Glory, Glory Manchester!',
+    quote: { text: `"Football is not a matter of life and death — it's far more important than that."`, author: '— Bill Shankly (speaking about football as Mancunians feel it)' },
+    cards: [
+      { emoji: '🔴', value: '20', label: 'Man Utd League Titles', desc: 'Most league titles of any English club — dominance stretching back to 1908' },
+      { emoji: '🔵', value: '10', label: 'Man City PL Titles', desc: '10 Premier League titles in 16 seasons — the most dominant era in English football' },
+      { emoji: '🏟️', value: '74,310', label: 'Old Trafford Capacity', desc: 'The Theatre of Dreams — third-largest stadium in the UK' },
+      { emoji: '💰', value: '£5.3B', label: 'Combined Club Value', desc: 'Two of the most valuable football clubs on Earth in the same city' },
+      { emoji: '📺', value: '650M', label: 'Derby TV Audience', desc: 'The Manchester Derby is the most-watched club fixture in global football' },
+      { emoji: '🌍', value: '1.5B', label: 'Combined Fanbase', desc: 'Red and Blue united in fandom across every continent on Earth' }
+    ],
+    timeline: [
+      { year: '1878', text: 'Newton Heath LYR FC founded — becomes Manchester United in 1902.' },
+      { year: '1880', text: 'Ardwick AFC founded — becomes Manchester City in 1894.' },
+      { year: '1968', text: 'Manchester United win European Cup — first English club to do so.' },
+      { year: '1999', text: 'United\'s Treble — PL, FA Cup, Champions League in one season.' },
+      { year: '2012', text: 'City win PL on 93:20 — the most dramatic title moment ever.' },
+      { year: '2023', text: 'City win the Treble — equalling United\'s legendary 1999 feat.' }
+    ],
+    tags: [
+      { text: '🔴 Manchester United', col: '#ff2200' },
+      { text: '🔵 Manchester City', col: '#6cbeff' },
+      { text: '🏆 Champions League', col: '#e8c54a' },
+      { text: '⚽ Premier League', col: '#00ff88' },
+      { text: '🌍 Global Fanbase', col: '#ffffff' }
+    ],
+    progress: [
+      { name: 'Combined Trophy Count', pct: 95, val: '100+' },
+      { name: 'Global TV Viewership (rank)', pct: 99, val: '#1 Match' },
+      { name: 'Stadium Utilization', pct: 98, val: '98%' },
+      { name: 'Youth Academy Output', pct: 87, val: 'World-Class' }
+    ]
+  },
+
+  culture: {
+    eyebrow: 'Sound · Art · Identity',
+    title: 'Loud, Proud, <span class="accent">Mancunian</span>',
+    emoji: '🎸',
+    theme: 'culture',
+    accentColor: '#cc88ff',
+    accentColor2: '#ff66cc',
+    scene3d: 'neon',
+    intro: `You can't understand Manchester without understanding its music. The Smiths. Joy Division. New Order. Oasis. The Stone Roses. The Courteeners. Each era producing a sound so distinct, so emotionally charged, it echoed across the world. And beyond music — art, architecture, nightlife, football, and an unshakeable Mancunian identity.`,
+    rainbow: '🎵 The City That Defined Cool',
+    quote: { text: `"Manchester has everything except a beach."`, author: '— Ian Brown, The Stone Roses' },
+    cards: [
+      { emoji: '🎵', value: '1978', label: 'Factory Records', desc: 'Tony Wilson launches Factory Records — Joy Division, New Order, the Haçienda' },
+      { emoji: '🏠', value: '1982', label: 'The Haçienda', desc: 'The most famous nightclub in history — birthplace of Madchester & rave culture' },
+      { emoji: '🎤', value: 'Oasis', label: 'Knebworth 1996', desc: '2.5 million applications for 250,000 tickets — the biggest concert demand ever' },
+      { emoji: '🎭', value: '200+', label: 'Live Venues', desc: 'Manchester\'s live music scene is the most active outside of London' },
+      { emoji: '🖼️', value: '1824', label: 'Art Gallery', desc: 'Manchester Art Gallery holds one of the finest pre-Raphaelite collections' },
+      { emoji: '🌈', value: 'Canal St', label: 'The Village', desc: 'Manchester\'s LGBTQ+ Village — the most vibrant and inclusive in Europe' }
+    ],
+    timeline: [
+      { year: '1976', text: 'Sex Pistols play Manchester Free Trade Hall — punk ignites the city.' },
+      { year: '1978', text: 'Joy Division debut. Post-punk\'s most haunting sound is born.' },
+      { year: '1982', text: 'The Haçienda opens. Music history begins on Whitworth St.' },
+      { year: '1989', text: 'The Stone Roses debut album — the soundtrack of a generation.' },
+      { year: '1994', text: 'Oasis: Definitely Maybe. Manchester rock goes worldwide.' },
+      { year: '2025', text: 'Oasis Reunion — 30 years on, Manchester still writes the setlist.' }
+    ],
+    tags: [
+      { text: '🎵 Madchester', col: '#cc88ff' },
+      { text: '🎸 Oasis', col: '#ff66cc' },
+      { text: '🏠 The Haçienda', col: '#cc88ff' },
+      { text: '📼 Factory Records', col: '#ff66cc' },
+      { text: '🌃 Nightlife', col: '#aa66ff' }
+    ],
+    progress: [
+      { name: 'Live Music Venues (UK rank)', pct: 88, val: '2nd' },
+      { name: 'Cultural Contribution to GDP', pct: 72, val: '£1.6B' },
+      { name: 'Music Festivals Per Year', pct: 80, val: '50+' },
+      { name: 'Arts & Culture Employment', pct: 65, val: '65K+' }
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// EMOJI BURST EFFECT
+// ═══════════════════════════════════════════════════════════════
+function spawnEmojisBurst(x, y, emojis) {
+  emojis.forEach((em, i) => {
+    const el = document.createElement('div');
+    el.className = 'emoji-burst';
+    el.textContent = em;
+    const angle = (i / emojis.length) * Math.PI * 2;
+    const dist = 60 + Math.random() * 60;
+    el.style.cssText = `
+      left: ${x}px; top: ${y}px;
+      --dx: ${Math.cos(angle) * dist}px;
+      --dy: ${Math.sin(angle) * dist - 80}px;
+      animation-delay: ${i * 0.05}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1400);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MINI 3D SCENE BUILDERS
+// ═══════════════════════════════════════════════════════════════
+const miniScenes = {};
+
+function buildMiniScene(canvas, type, accentHex) {
+  if (!window.THREE) return;
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(60, canvas.offsetWidth / canvas.offsetHeight, 0.1, 200);
+  const ren = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  ren.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  ren.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  ren.setClearColor(0x000000, 0);
+  ren.toneMapping = THREE.ACESFilmicToneMapping;
+
+  const accentColor = new THREE.Color(accentHex);
+  let animId;
+
+  if (type === 'city') {
+    cam.position.set(0, 8, 20);
+    const ambient = new THREE.AmbientLight(0x111133, 3);
+    scene.add(ambient);
+    const pt = new THREE.PointLight(accentHex, 4, 50);
+    pt.position.set(0, 15, 0);
+    scene.add(pt);
+    for (let i = -5; i <= 5; i++) {
+      const h = 3 + Math.random() * 10;
+      const geo = new THREE.BoxGeometry(1.2, h, 1.2);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x0d1a2e, emissive: new THREE.Color(accentHex).multiplyScalar(0.08), roughness: 0.4, metalness: 0.8 });
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(i * 2.5, h / 2 - 2, -(Math.random() * 5 + 3));
+      scene.add(m);
+    }
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshStandardMaterial({ color: 0x050810, roughness: 0.1, metalness: 0.9 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -2;
+    scene.add(floor);
+    let t = 0;
+    function anim() { animId = requestAnimationFrame(anim); t += 0.008; cam.position.x = Math.sin(t) * 6; cam.lookAt(0, 4, 0); ren.render(scene, cam); }
+    anim();
+  }
+  else if (type === 'factory') {
+    cam.position.set(0, 5, 18);
+    scene.fog = new THREE.FogExp2(0x1a0800, 0.03);
+    const hemi = new THREE.HemisphereLight(0xff6600, 0x220000, 2);
+    scene.add(hemi);
+    for (let i = -3; i <= 3; i++) {
+      const h = 5 + Math.random() * 7;
+      const geo = new THREE.BoxGeometry(2.5, h, 2);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x1a0800, roughness: 1, emissive: 0x200800, emissiveIntensity: 0.3 });
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(i * 4, h / 2 - 2, -(Math.random() * 3 + 2));
+      scene.add(m);
+      // Chimneys
+      const cGeo = new THREE.CylinderGeometry(0.15, 0.2, 5);
+      const ch = new THREE.Mesh(cGeo, new THREE.MeshStandardMaterial({ color: 0x111111 }));
+      ch.position.set(i * 4, m.position.y + h / 2 + 2.5, m.position.z);
+      scene.add(ch);
+      const glow = new THREE.PointLight(accentHex, 2, 8);
+      glow.position.set(i * 4, ch.position.y + 3, ch.position.z);
+      scene.add(glow);
+    }
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshStandardMaterial({ color: 0x0a0400 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -2;
+    scene.add(floor);
+    let t = 0;
+    function anim() { animId = requestAnimationFrame(anim); t += 0.007; cam.position.x = Math.sin(t * 0.5) * 5; cam.lookAt(0, 3, 0); ren.render(scene, cam); }
+    anim();
+  }
+  else if (type === 'network') {
+    cam.position.set(0, 0, 20);
+    const ambient = new THREE.AmbientLight(0x001030, 3);
+    scene.add(ambient);
+    const nodes = [];
+    for (let i = 0; i < 15; i++) {
+      const geo = new THREE.SphereGeometry(0.25, 8, 8);
+      const mat = new THREE.MeshBasicMaterial({ color: accentHex });
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 5);
+      scene.add(m);
+      nodes.push(m);
+      const pl = new THREE.PointLight(accentHex, 1, 5);
+      pl.position.copy(m.position);
+      scene.add(pl);
+    }
+    // Connections
+    for (let i = 0; i < 20; i++) {
+      const a = nodes[Math.floor(Math.random() * nodes.length)];
+      const b = nodes[Math.floor(Math.random() * nodes.length)];
+      const pts = [a.position.clone(), b.position.clone()];
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      const mat = new THREE.LineBasicMaterial({ color: accentHex, transparent: true, opacity: 0.2 });
+      scene.add(new THREE.Line(geo, mat));
+    }
+    let t = 0;
+    function anim() { animId = requestAnimationFrame(anim); t += 0.01; cam.position.x = Math.sin(t * 0.3) * 3; cam.position.y = Math.cos(t * 0.2) * 2; cam.lookAt(0, 0, 0); nodes.forEach((n, i) => { n.position.y += Math.sin(t + i) * 0.005; }); ren.render(scene, cam); }
+    anim();
+  }
+  else if (type === 'atoms') {
+    cam.position.set(0, 0, 14);
+    const ambient = new THREE.AmbientLight(0x001a10, 3);
+    scene.add(ambient);
+    // Nucleus
+    const nucl = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), new THREE.MeshBasicMaterial({ color: accentHex }));
+    scene.add(nucl);
+    const nucleusGlow = new THREE.PointLight(accentHex, 4, 15);
+    scene.add(nucleusGlow);
+    // Electron orbits
+    const electrons = [];
+    for (let i = 0; i < 3; i++) {
+      const r = 2.5 + i * 1.2;
+      const orbitGeo = new THREE.TorusGeometry(r, 0.03, 8, 64);
+      const orbitMat = new THREE.MeshBasicMaterial({ color: accentHex, transparent: true, opacity: 0.15 });
+      const orbit = new THREE.Mesh(orbitGeo, orbitMat);
+      orbit.rotation.x = (i / 3) * Math.PI;
+      orbit.rotation.y = (i / 3) * Math.PI * 0.7;
+      scene.add(orbit);
+      const eSphere = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), new THREE.MeshBasicMaterial({ color: '#ffffff' }));
+      scene.add(eSphere);
+      electrons.push({ mesh: eSphere, radius: r, speed: 0.8 + i * 0.4, phase: (i / 3) * Math.PI * 2, tiltX: (i / 3) * Math.PI, tiltY: (i / 3) * Math.PI * 0.7 });
+    }
+    let t = 0;
+    function anim() {
+      animId = requestAnimationFrame(anim); t += 0.02;
+      electrons.forEach(e => {
+        const ang = t * e.speed + e.phase;
+        const x = Math.cos(ang) * e.radius;
+        const y = Math.sin(ang) * e.radius * Math.cos(e.tiltX);
+        const z = Math.sin(ang) * e.radius * Math.sin(e.tiltX);
+        e.mesh.position.set(x, y, z);
+      });
+      cam.position.x = Math.sin(t * 0.3) * 2;
+      cam.lookAt(0, 0, 0);
+      ren.render(scene, cam);
+    }
+    anim();
+  }
+  else if (type === 'stadium') {
+    cam.position.set(0, 20, 35);
+    const ambient = new THREE.AmbientLight(0x111122, 3);
+    scene.add(ambient);
+    // Pitch
+    const pitch = new THREE.Mesh(new THREE.PlaneGeometry(30, 20), new THREE.MeshStandardMaterial({ color: 0x1a5c1a, roughness: 0.8 }));
+    pitch.rotation.x = -Math.PI / 2; pitch.position.y = -2;
+    scene.add(pitch);
+    // Lines
+    const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+    [[0, -10, 0, 10], [-15, -10, -15, 10], [15, -10, 15, 10]].forEach(([x1, z1, x2, z2]) => {
+      const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x1, -1.99, z1), new THREE.Vector3(x2, -1.99, z2)]);
+      scene.add(new THREE.Line(g, lineMat));
+    });
+    // Stands
+    [[0, -12, 0, 30, 4], [0, 12, Math.PI, 30, 4], [-16, 0, Math.PI / 2, 4, 20], [16, 0, -Math.PI / 2, 4, 20]].forEach(([x, z, ry, w, d]) => {
+      const geo = new THREE.BoxGeometry(w, 6, d);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, emissive: 0x0a0a1a, emissiveIntensity: 0.4 });
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(x, 0, z); m.rotation.y = ry;
+      scene.add(m);
+    });
+    // Floodlights
+    [[12, 10], [-12, 10], [12, -10], [-12, -10]].forEach(([x, z]) => {
+      const pl = new THREE.SpotLight(0xffffee, 30, 60, 0.6, 0.3);
+      pl.position.set(x, 14, z); pl.target.position.set(0, 0, 0);
+      scene.add(pl); scene.add(pl.target);
+    });
+    let t = 0;
+    function anim() { animId = requestAnimationFrame(anim); t += 0.006; cam.position.x = Math.sin(t) * 8; cam.lookAt(0, 0, 0); ren.render(scene, cam); }
+    anim();
+  }
+  else if (type === 'neon') {
+    cam.position.set(0, 3, 16);
+    scene.fog = new THREE.FogExp2(0x060010, 0.04);
+    const ambient = new THREE.AmbientLight(0x110033, 4);
+    scene.add(ambient);
+    const neonCols = [0xff00ff, 0x00ffff, 0xff6600, 0xcc00ff, 0x00ff88];
+    for (let i = -4; i <= 4; i++) {
+      const h = 4 + Math.random() * 8;
+      const col = neonCols[Math.abs(i) % neonCols.length];
+      const geo = new THREE.BoxGeometry(1.5, h, 1.2);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x0a0010, emissive: new THREE.Color(col).multiplyScalar(0.08) });
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(i * 2.8, h / 2 - 2, -(Math.random() * 4 + 2));
+      scene.add(m);
+      const edge = new THREE.EdgesGeometry(geo);
+      const lineMat = new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.5 });
+      const lines = new THREE.LineSegments(edge, lineMat);
+      lines.position.copy(m.position);
+      scene.add(lines);
+      const pl = new THREE.PointLight(col, 1.5, 8);
+      pl.position.set(i * 2.8, h - 1, m.position.z);
+      scene.add(pl);
+    }
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshStandardMaterial({ color: 0x050010, roughness: 0.05, metalness: 1 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -2;
+    scene.add(floor);
+    let t = 0;
+    const lights = scene.children.filter(c => c.isPointLight);
+    function anim() {
+      animId = requestAnimationFrame(anim); t += 0.012;
+      lights.forEach((l, i) => { l.intensity = 1.2 + Math.sin(t * 2 + i) * 0.8; });
+      cam.position.x = Math.sin(t * 0.4) * 4;
+      cam.lookAt(0, 3, 0);
+      ren.render(scene, cam);
+    }
+    anim();
+  }
+
+  return { ren, animId: () => animId };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// OPEN MODAL
+// ═══════════════════════════════════════════════════════════════
+let currentMiniScene = null;
+
+function openModal(key, btnEl) {
+  const data = MODALS[key];
+  if (!data) return;
+
+  // Emoji burst from button
+  const rect = btnEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const burstEmojis = [data.emoji, '✨', '💫', '⚡', '🌟', '💥'];
+  spawnEmojisBurst(cx, cy, burstEmojis);
+
+  // Build cards HTML
+  const cardsHTML = data.cards.map((c, i) => `
+    <div class="modal-card" style="transition-delay:${0.1 + i * 0.07}s">
+      <span class="modal-card-emoji">${c.emoji}</span>
+      <div class="modal-card-value">${c.value}</div>
+      <div class="modal-card-label">${c.label}</div>
+      <div class="modal-card-desc">${c.desc}</div>
+    </div>
+  `).join('');
+
+  const timelineHTML = data.timeline.map((t, i) => `
+    <div class="timeline-item" style="transition-delay:${0.15 + i * 0.08}s">
+      <div class="timeline-year">${t.year}</div>
+      <div class="timeline-text">${t.text}</div>
+    </div>
+  `).join('');
+
+  const tagsHTML = data.tags.map(t => `
+    <span class="modal-tag" style="color:${t.col};border-color:${t.col};background:${t.col}11">${t.text}</span>
+  `).join('');
+
+  const progressHTML = data.progress.map(p => `
+    <div class="progress-item">
+      <div class="progress-label-row">
+        <span class="progress-name">${p.name}</span>
+        <span class="progress-value">${p.val}</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" data-pct="${p.pct}" style="--accent-col:${data.accentColor};--accent-col2:${data.accentColor2}"></div>
+      </div>
+    </div>
+  `).join('');
+
+  const inner = document.getElementById('modal-inner');
+  inner.innerHTML = `
+    <div data-modal="${data.theme}" style="--accent-col:${data.accentColor};--accent-col2:${data.accentColor2}">
+      <!-- HEADER -->
+      <div class="modal-header">
+        <div class="modal-header-bg">
+          <canvas class="modal-header-canvas" id="mini-3d-canvas" width="880" height="220"></canvas>
+        </div>
+        <div class="modal-header-overlay"></div>
+        <div class="modal-header-content">
+          <span class="modal-emoji-big">${data.emoji}</span>
+          <span class="modal-eyebrow" style="color:${data.accentColor}">${data.eyebrow}</span>
+          <div class="modal-title" style="--accent-col:${data.accentColor}">${data.title}</div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body">
+        <!-- INTRO -->
+        <p class="modal-intro" style="border-color:${data.accentColor}">${data.intro}</p>
+
+        <!-- QUOTE -->
+        <div class="modal-quote" style="border-color:${data.accentColor}">
+          ${data.quote.text}
+          <div class="modal-quote-author" style="color:${data.accentColor}">${data.quote.author}</div>
+        </div>
+
+        <!-- RAINBOW TITLE -->
+        <div class="modal-rainbow-title">${data.rainbow}</div>
+
+        <!-- FACT CARDS -->
+        <div class="modal-cards">${cardsHTML}</div>
+
+        <!-- DIVIDER -->
+        <div class="modal-divider"></div>
+
+        <!-- PROGRESS BARS -->
+        <div class="modal-progress-list">${progressHTML}</div>
+
+        <!-- DIVIDER -->
+        <div class="modal-divider"></div>
+
+        <!-- TIMELINE -->
+        <div class="modal-timeline">${timelineHTML}</div>
+
+        <!-- TAGS -->
+        <div class="modal-tags">${tagsHTML}</div>
+      </div>
+    </div>
+  `;
+
+  // Set modal accent line
+  const box = document.getElementById('modal-box');
+  box.style.setProperty('--modal-accent', `linear-gradient(90deg, ${data.accentColor}, ${data.accentColor2})`);
+
+  // Show overlay
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Build mini 3D scene
+  setTimeout(() => {
+    const miniCanvas = document.getElementById('mini-3d-canvas');
+    if (miniCanvas && window.THREE) {
+      if (currentMiniScene) {
+        // stop old scene
+        currentMiniScene = null;
+      }
+      currentMiniScene = buildMiniScene(miniCanvas, data.scene3d, data.accentColor);
+    }
+
+    // Animate cards in
+    document.querySelectorAll('.modal-card').forEach(c => {
+      setTimeout(() => c.classList.add('visible'), 50);
+    });
+    document.querySelectorAll('.timeline-item').forEach(c => {
+      setTimeout(() => c.classList.add('visible'), 50);
+    });
+
+    // Animate progress bars
+    document.querySelectorAll('.progress-fill').forEach(p => {
+      const pct = p.dataset.pct;
+      setTimeout(() => { p.style.width = pct + '%'; }, 300);
+    });
+  }, 300);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLOSE MODAL
+// ═══════════════════════════════════════════════════════════════
+function closeModal() {
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  box.style.opacity = '0';
+  box.style.transform = 'scale(0.9) translateY(20px)';
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    box.style.opacity = '';
+    box.style.transform = '';
+    box.scrollTop = 0;
+  }, 400);
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+
 </script>
 </body>
 </html>
